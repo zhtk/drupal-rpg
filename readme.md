@@ -22,3 +22,15 @@ Tutaj znajduje się kod plugina do drupala, który będzie ułatwiał tworzenie 
 * Powinien się wyświetlać stan życia i pieniędzy
 * Być może także przedmiotów (powinno być możliwe tworzenie niewidocznych przedmiotów na potrzeby sterowania fabułą)
 * Wejście na stronę główną mogłoby pokazywać menu z linkiem do nowej gry i odtworzenia poprzedniej sesji
+
+## Specyfikacja techniczna projektu zaliczeniowego
+
+1. Technologia przygotowania serwisu - Drupal
+  * opis dodatkowych narzędzi/komponentów, które będą potrzebne (być może jakaś zewnętrzna aplikacja, skrypt w innym języku programowania itp.).
+2. Lista ról użytkowników: gracz, administrator
+3. Opis funkcjonalności - może być jako zestaw krótkich scenariuszy użycia przez różne role użytkowników.
+4. Listę dodatkowych modułów/wtyczek, które Państwo planują wykorzystać. Nie muszą to być dokładnie wszystkie, które zostaną użyte, chodzi raczej o kluczowe komponenty. Lista ta nie jest również wiążąca, można ją modyfikować.
+5. Strukturę danych serwisu, czyli typy zawartości i pola
+6. Strukturę menu serwisu (to również nie jest informacja wiążąca, można będzie dokonywać zmian)
+7. Wstępny układ elementów serwisu jako szkic - proszę ograniczyć się tylko do kluczowych podstron
+8. Harmonogram prac uwzględniający termin oddania w sesji poprawkowej (przypominam, że sesja poprawkowa to pierwszy termin)

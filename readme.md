@@ -26,11 +26,26 @@ Tutaj znajduje się kod plugina do drupala, który będzie ułatwiał tworzenie 
 ## Specyfikacja techniczna projektu zaliczeniowego
 
 1. Technologia przygotowania serwisu - Drupal
-  * opis dodatkowych narzędzi/komponentów, które będą potrzebne (być może jakaś zewnętrzna aplikacja, skrypt w innym języku programowania itp.).
+  * Nie planujemy na razie wykorzystania żadnych dodatkowych narzędzi.
 2. Lista ról użytkowników: gracz, administrator
-3. Opis funkcjonalności - może być jako zestaw krótkich scenariuszy użycia przez różne role użytkowników.
-4. Listę dodatkowych modułów/wtyczek, które Państwo planują wykorzystać. Nie muszą to być dokładnie wszystkie, które zostaną użyte, chodzi raczej o kluczowe komponenty. Lista ta nie jest również wiążąca, można ją modyfikować.
+3. Opis funkcjonalności: 
+4. Listę dodatkowych modułów/wtyczek:
+  * Session API
+  * Views
 5. Strukturę danych serwisu, czyli typy zawartości i pola
+ * _stan_ - informacja o stanie w jakim znajduje się użytkownik: aktualny pokój, stan ekwipunku, życie, rezerwa walutowa w postaci kredytów elektronicznej kryptowaluty (kryptokredytów);
+ * _akcja_ - możliwa do wykonania ze spełnionymi _wymaganiami_, powoduje _efekty_;
+ * _wymaganie_ - coś potrzebne do wykonania _akcji_ - posiadanie lub brak danego _stanu_, może być złożone;
+ * _efekt_ - dodanie / usunięcie danego _stanu_ sesji.
+ Tabelka _stanów_ jest połączona z użytkownikami relacją wiele-do-wielu, a elementy są przypisane do jednej z kategorii takich jak: miejsce przebywania, stan w rozmowie z NPC, posiadanie danego przedmiotu itp.. Na podstawie _stanów_, jakie posiada dany użytkownik renderowana jest strona specjalnie dla niego utworzona. W ten sposób nie można przejść do innego pokoju/wygrać gry wpisując do przeglądarki odpowiedni URL.
 6. Strukturę menu serwisu (to również nie jest informacja wiążąca, można będzie dokonywać zmian)
+ * Link do strony głównej
 7. Wstępny układ elementów serwisu jako szkic - proszę ograniczyć się tylko do kluczowych podstron
+ * Strona główna, żądająca logowania się i pozwalalająca na rozpoczęcie nowej gry i przejście do pokoju zapisanego w stanie
+ * Pokoje
+ * Strona z rejestracją
 8. Harmonogram prac uwzględniający termin oddania w sesji poprawkowej (przypominam, że sesja poprawkowa to pierwszy termin)
+ * Do połowy stycznia:
+  * schemat bazy danych
+  * widoki pokojów
+ * Do sesji - fabuła i poprawki

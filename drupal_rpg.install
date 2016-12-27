@@ -1,0 +1,113 @@
+<?php
+function prepare_gameitem()
+{  
+	$t = get_t();
+
+	// Definicja nowego content type
+	$content_type = array(		
+		'type' => 'gameitem',
+		'name' => $t('Game item'),
+		'description'   => $t('Create a new game item'),
+		'title_label'   => $t('Game item title'),
+		'base'          => 'node_content',
+		'custom'        => TRUE,
+		'locked'        => 1,
+	);
+	$node_type = node_type_set_defaults($content_type);
+	node_type_save($node_type);
+
+	// Dodawanie potrzebnych pól
+	$fields = array(
+		// Nazwa przedmiotu
+		'drupal_rpg_gameitem_name' => array(
+			'field_name'	=> 'drupal_rpg_gameitem_name',
+			'type'          => 'text',
+			'cardinality'	=> 1,
+			'locked'        => 1,
+		),
+
+		// Widoczność przedmiotu
+		'drupal_rpg_gameitem_visibility' => array(
+			'field_name'	=> 'drupal_rpg_gameitem_visibility',
+			'type'          => 'list_boolean',
+			'cardinality'	=> 1,
+			'settings' => array(
+				'allowed_values' => array(0 => 0, 1 => 1),
+			),
+			'locked'        => 1,
+		),
+	);
+
+	foreach( $fields as $field ) {
+		field_create_field($field);
+	}
+
+	// Podpinamy pola pod content type
+	$instances = array(
+		// Nazwa
+		'drupal_rpg_gameitem_name'	=> array(
+			'field_name'   => 'drupal_rpg_gameitem_name',
+			'label'        => $t('Item name shown for player'),
+			'required'     => TRUE,
+			'widget'       => array(
+				'type'	=> 'text_textfield'
+			),
+		),
+
+		// Widoczność
+		'drupal_rpg_gameitem_visibility'	=> array(
+			'field_name'   => 'drupal_rpg_gameitem_visibility',
+			'label'        => $t('Is visible for player'),
+			'required'     => FALSE,
+			'widget'       => array(
+				//'type'	=> 'options_buttons',
+				'type' => 'options_onoff',
+				'settings' => array('display_label' => 1),
+			),
+		),
+	);
+
+	foreach( $instances as $instance ) {
+		$instance['entity_type']   = 'node';
+		$instance['bundle']        = 'gameitem';
+		$instance['custom']        = 1;
+		$instance['modified']        = 1;
+		$instance['locked']        = 1;
+		field_create_instance($instance);
+	}
+}
+
+function remove_gameitem()
+{
+	// Usuwamy istniejące itemki
+	$query = 'SELECT nid ';
+	$query .= 'FROM {node} ';
+	$query .= 'WHERE {node}.type = :type ';
+	
+	$result = db_query( $query, array(':type' => 'gameitem') );
+	$nids = array();
+	foreach( $result as $row ) { 
+		$nids[] = $row->nid;
+	}
+ 
+	node_delete_multiple( $nids );
+
+	// Uswamy pola
+	foreach( field_info_instances('node', 'gameitem') as $field_name => $instance ) {
+		field_delete_instance($instance);
+	}
+ 
+	// Usuwamy typ
+	node_type_delete('gameitem');
+	field_purge_batch(1000);
+}
+
+function drupal_rpg_enable()
+{
+	prepare_gameitem();
+}
+
+function drupal_rpg_disable()
+{
+	remove_gameitem();
+}

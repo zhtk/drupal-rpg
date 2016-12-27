@@ -53,3 +53,8 @@ Tutaj znajduje się kod plugina do drupala, który będzie ułatwiał tworzenie 
    * schemat bazy danych
    * widoki pokojów
  * Do sesji - fabuła i poprawki
+
+## Instalacja
+ * Sklonuj zawartość repozytorium do katalogu $drupal/sites/all/modules/, gdzie $druapl oznacza ścieżkę do instancji drupala
+ * Zmień nazwę skolonawego katalogu z drupal-rpg na drupal\_rpg
+ * Aktywuj plugin w ustawieniach

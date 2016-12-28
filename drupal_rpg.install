@@ -1,4 +1,327 @@
 <?php
+
+function prepare_transitions()
+{
+	$t = get_t();
+
+	$content_type = array(
+		'type' => 'transition',
+		'name' => $t('Game state transition'),
+		'description'   => $t('Collects information needed for changing states'),
+		'title_label'   => $t('Title of transition'),
+		'base'          => 'node_content',
+		'custom'        => TRUE,
+		'locked'        => 1,
+	);
+	$node_type = node_type_set_defaults($content_type);
+	node_type_save($node_type);
+
+	$fields = array(
+		// Wymagane przedmioty do wyświetlenia
+		'transition_visibility' => array(
+			'field_name'	=> 'transition_visibility',
+			'label'   => $t('Visible if present'),
+			'type'          => 'entityreference',
+			'cardinality'	=> FIELD_CARDINALITY_UNLIMITED,
+			'locked'        => 1,
+			'settings' => array(
+				'target_type' => 'node',
+				'handler' => 'base',
+				'handler_settings' => array(
+					'target_bundles' => array(
+						'gameitem'
+					),
+				),
+			),
+			'widget' => array(
+				'type' => 'entityreference_autocomplete',
+				'settings' => array(
+					'match_operator' => 'STARTS_WITH',
+				),
+			),
+			'display' => array(
+				'default' => array(
+					'label' => 'hidden',
+					'type' => 'entityreference_label',
+					'settings' => array(
+						'link' => TRUE,
+					),
+				),
+			),
+		),
+
+		// Wymagane przedmioty do odpalenia
+		'transition_fire' => array(
+			'field_name'	=> 'transition_fire',
+			'label'   => $t('Fireable if present'),
+			'type'          => 'entityreference',
+			'cardinality'	=> FIELD_CARDINALITY_UNLIMITED,
+			'locked'        => 1,
+			'settings' => array(
+				'target_type' => 'node',
+				'handler' => 'base',
+				'handler_settings' => array(
+					'target_bundles' => array(
+						'gameitem'
+					),
+				),
+			),
+			'widget' => array(
+				'type' => 'entityreference_autocomplete',
+				'settings' => array(
+					'match_operator' => 'STARTS_WITH',
+				),
+			),
+			'display' => array(
+				'default' => array(
+					'label' => 'hidden',
+					'type' => 'entityreference_label',
+					'settings' => array(
+						'link' => TRUE,
+					),
+				),
+			),
+		),
+
+		// Dodawane przedmioty (mogą być już w ekwipunku)
+		'transition_item_add' => array(
+			'field_name'	=> 'transition_item_add',
+			'label'   => $t('Add following items'),
+			'type'          => 'entityreference',
+			'cardinality'	=> FIELD_CARDINALITY_UNLIMITED,
+			'locked'        => 1,
+			'settings' => array(
+				'target_type' => 'node',
+				'handler' => 'base',
+				'handler_settings' => array(
+					'target_bundles' => array(
+						'gameitem'
+					),
+				),
+			),
+			'widget' => array(
+				'type' => 'entityreference_autocomplete',
+				'settings' => array(
+					'match_operator' => 'STARTS_WITH',
+				),
+			),
+			'display' => array(
+				'default' => array(
+					'label' => 'hidden',
+					'type' => 'entityreference_label',
+					'settings' => array(
+						'link' => TRUE,
+					),
+				),
+			),
+		),
+
+		// Usuwane przedmioty (mogą nie istnieć)
+		'transition_item_remove' => array(
+			'field_name'	=> 'transition_item_remove',
+			'label'   => $t('Remove following items'),
+			'type'          => 'entityreference',
+			'cardinality'	=> FIELD_CARDINALITY_UNLIMITED,
+			'locked'        => 1,
+			'settings' => array(
+				'target_type' => 'node',
+				'handler' => 'base',
+				'handler_settings' => array(
+					'target_bundles' => array(
+						'gameitem'
+					),
+				),
+			),
+			'widget' => array(
+				'type' => 'entityreference_autocomplete',
+				'settings' => array(
+					'match_operator' => 'STARTS_WITH',
+				),
+			),
+			'display' => array(
+				'default' => array(
+					'label' => 'hidden',
+					'type' => 'entityreference_label',
+					'settings' => array(
+						'link' => TRUE,
+					),
+				),
+			),
+		),
+		// Zmiana poziomu życia
+		'transition_life_change' => array(
+			'field_name'	=> 'transition_life_change',
+			'type'          => 'number_integer',
+			'cardinality'	=> 1,
+			'locked'        => 1,
+			'label'        => $t('Change of life level in transition'),
+			'required'     => TRUE,
+			'widget'       => array(
+				'type'	=> 'number',
+			),
+		),
+
+		// Zmiana poziomu pieniędzy
+		// Przejście jest możliwe tylko jeśli na koncie gracza jest
+		// wystarczająca ilość żetonów!
+		'transition_money_change' => array(
+			'field_name'	=> 'transition_money_change',
+			'type'          => 'number_integer',
+			'cardinality'	=> 1,
+			'locked'        => 1,
+			'label'        => $t('Change of money points in transition'),
+			'required'     => TRUE,
+			'widget'       => array(
+				'type'	=> 'number',
+			),
+		),
+
+		// Pomieszczenie, do którego przechodzimy
+		// Będzie dodane potem, po utworzeniu pomieszczenia
+	);
+
+	foreach( $fields as $field )
+		field_create_field($field);
+
+	foreach( $fields as $instance ) {
+		$instance['entity_type']   = 'node';
+		$instance['bundle']        = 'transition';
+		$instance['custom']        = 1;
+		$instance['modified']      = 1;
+		field_create_instance($instance);
+	}
+}
+
+function prepare_room()
+{
+	$t = get_t();
+
+	$content_type = array(
+		'type' => 'room',
+		'name' => $t('Game room'),
+		'description'   => $t('Collects information needed for displaying room'),
+		'title_label'   => $t('Name of room'),
+		'base'          => 'node_content',
+		'custom'        => TRUE,
+		'locked'        => 1,
+	);
+	$node_type = node_type_set_defaults($content_type);
+	node_type_save($node_type);
+
+	$fields = array(
+		// Tutuł pokoju wyświetlany graczowi
+		'room_title' => array(
+			'field_name'	=> 'room_title',
+			'type'          => 'text',
+			'cardinality'	=> 1,
+			'locked'        => 1,
+			'label'        => $t('Visible title of room'),
+			'required'     => TRUE,
+			'widget'       => array(
+				'type'	=> 'text_textfield'
+			),
+		),
+
+		// Opis pokoju
+		'room_description' => array(
+			'field_name'	=> 'room_description',
+			'label'   => $t('Room description'),
+			'type'          => 'text_with_summary',
+			'cardinality'	=> 1,
+			'locked'        => 1,
+			'required'     => TRUE,
+			'widget' => array(
+				'type' => 'text_textarea_with_summary',
+			),
+		),
+
+		// Możliwe przejścia z pokoju
+		'room_transitions' => array(
+			'field_name'	=> 'room_transitions',
+			'label'   => $t('Possible transitions'),
+			'type'          => 'entityreference',
+			'cardinality'	=> FIELD_CARDINALITY_UNLIMITED,
+			'locked'        => 1,
+			'settings' => array(
+				'target_type' => 'node',
+				'handler' => 'base',
+				'handler_settings' => array(
+					'target_bundles' => array(
+						'transition'
+					),
+				),
+			),
+			'widget' => array(
+				'type' => 'entityreference_autocomplete',
+				'settings' => array(
+					'match_operator' => 'STARTS_WITH',
+				),
+			),
+			'display' => array(
+				'default' => array(
+					'label' => 'hidden',
+					'type' => 'entityreference_label',
+					'settings' => array(
+						'link' => TRUE,
+					),
+				),
+			),
+		),
+	);
+
+	foreach( $fields as $field )
+		field_create_field($field);
+
+	foreach( $fields as $instance ) {
+		$instance['entity_type']   = 'node';
+		$instance['bundle']        = 'room';
+		$instance['custom']        = 1;
+		$instance['modified']      = 1;
+		field_create_instance($instance);
+	}
+
+	// Dodanie referencji do pomieszczenia końcowego w przejściach
+	$field = array(
+		'field_name'	=> 'transition_link',
+		'label'   => $t('Transition destination'),
+		'type'          => 'entityreference',
+		'cardinality'	=> 1,
+		'locked'        => 1,
+		'settings' => array(
+			'target_type' => 'node',
+			'handler' => 'base',
+			'handler_settings' => array(
+				'target_bundles' => array(
+					'room'
+				),
+			),
+		),
+		'widget' => array(
+			'type' => 'entityreference_autocomplete',
+			'settings' => array(
+				'match_operator' => 'STARTS_WITH',
+			),
+		),
+		'display' => array(
+			'default' => array(
+				'label' => 'hidden',
+				'type' => 'entityreference_label',
+				'settings' => array(
+					'link' => TRUE,
+				),
+			),
+		),
+	);
+
+	field_create_field($field);
+
+	$field['entity_type']   = 'node';
+	$field['bundle']        = 'transition';
+	$field['custom']        = 1;
+	$field['modified']      = 1;
+	field_create_instance($field);
+}
+
 function prepare_gameitem()
 {  
 	$t = get_t();
@@ -19,16 +342,16 @@ function prepare_gameitem()
 	// Dodawanie potrzebnych pól
 	$fields = array(
 		// Nazwa przedmiotu
-		'drupal_rpg_gameitem_name' => array(
-			'field_name'	=> 'drupal_rpg_gameitem_name',
+		'gameitem_name' => array(
+			'field_name'	=> 'gameitem_name',
 			'type'          => 'text',
 			'cardinality'	=> 1,
 			'locked'        => 1,
 		),
 
 		// Widoczność przedmiotu
-		'drupal_rpg_gameitem_visibility' => array(
-			'field_name'	=> 'drupal_rpg_gameitem_visibility',
+		'gameitem_visibility' => array(
+			'field_name'	=> 'gameitem_visibility',
 			'type'          => 'list_boolean',
 			'cardinality'	=> 1,
 			'settings' => array(
@@ -45,8 +368,8 @@ function prepare_gameitem()
 	// Podpinamy pola pod content type
 	$instances = array(
 		// Nazwa
-		'drupal_rpg_gameitem_name'	=> array(
-			'field_name'   => 'drupal_rpg_gameitem_name',
+		'gameitem_name'	=> array(
+			'field_name'   => 'gameitem_name',
 			'label'        => $t('Item name shown for player'),
 			'required'     => TRUE,
 			'widget'       => array(
@@ -55,8 +378,8 @@ function prepare_gameitem()
 		),
 
 		// Widoczność
-		'drupal_rpg_gameitem_visibility'	=> array(
-			'field_name'   => 'drupal_rpg_gameitem_visibility',
+		'gameitem_visibility'	=> array(
+			'field_name'   => 'gameitem_visibility',
 			'label'        => $t('Is visible for player'),
 			'required'     => FALSE,
 			'widget'       => array(
@@ -77,37 +400,36 @@ function prepare_gameitem()
 	}
 }
 
-function remove_gameitem()
+function remove_object($name)
 {
-	// Usuwamy istniejące itemki
 	$query = 'SELECT nid ';
 	$query .= 'FROM {node} ';
 	$query .= 'WHERE {node}.type = :type ';
 	
-	$result = db_query( $query, array(':type' => 'gameitem') );
+	$result = db_query( $query, array(':type' => $name) );
 	$nids = array();
-	foreach( $result as $row ) { 
+	foreach( $result as $row )
 		$nids[] = $row->nid;
-	}
  
 	node_delete_multiple( $nids );
 
-	// Uswamy pola
-	foreach( field_info_instances('node', 'gameitem') as $field_name => $instance ) {
+	foreach( field_info_instances('node', $name) as $field_name => $instance )
 		field_delete_instance($instance);
-	}
  
-	// Usuwamy typ
-	node_type_delete('gameitem');
+	node_type_delete($name);
 	field_purge_batch(1000);
 }
 
 function drupal_rpg_enable()
 {
 	prepare_gameitem();
+	prepare_transitions();
+	prepare_room();
 }
 
 function drupal_rpg_disable()
 {
-	remove_gameitem();
+	remove_object('transition');
+	remove_object('gameitem');
+	remove_object('room');
 }

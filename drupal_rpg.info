@@ -2,5 +2,7 @@ name = Drupal RPG
 description = Moduł pozwalający na tworzenie gier RPG. 
 core = 7.x
 
+dependencies[] = entityreference
+
 files[] = drupal_rpg.module
 files[] = drupal_rpg.install

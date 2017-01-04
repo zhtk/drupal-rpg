@@ -1,2 +1,21 @@
 <?php
 
+// Wykonanie tranzycji - zmiany stanu
+function drupal_rpg_node_view($node, $view_mode)
+{
+	// Jeśli typ węzła nas nie interesuje, to zostawiamy go bez zmian
+	if ($node->type != "transition")
+		return $node;
+
+	if ($view_mode != 'full' || !node_is_page($node))
+		return $node;
+
+	// Wykonujemy przejście
+	// TODO
+
+	// Zmieniamy cel
+	$dest = $node->transition_link[LANGUAGE_NONE][0]['target_id'];
+	drupal_goto('node/'.$dest.'/', array());
+
+	return $node;
+}

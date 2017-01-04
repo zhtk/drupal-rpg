@@ -283,10 +283,11 @@ function prepare_room()
 	// Dodanie referencji do pomieszczenia końcowego w przejściach
 	$field = array(
 		'field_name'	=> 'transition_link',
-		'label'   => $t('Transition destination'),
+		'label'         => $t('Transition destination'),
 		'type'          => 'entityreference',
 		'cardinality'	=> 1,
 		'locked'        => 1,
+		'required'      => TRUE,
 		'settings' => array(
 			'target_type' => 'node',
 			'handler' => 'base',

@@ -1,8 +1,66 @@
 <?php
 
+// Czy link przejścia jest widoczny
+function is_transition_visible($nodeid)
+{
+	// TODO
+	return TRUE;
+}
+
+// Czy link prowadzący do przejścia jest aktywny
+function is_transition_disabled($nodeid)
+{
+	// TODO
+	return FALSE;
+}
+
+// Zmienia wygląd pokoju
+function drupal_rpg_node_view_alter(&$build)
+{
+	// Szybkie sprawdzenie typu
+	if (!isset($build['room_title']))
+		return;
+
+	// Ustaw tytuł
+	drupal_set_title($build['room_title']['#items'][0]['value']);
+	
+	// Wstaw status gracza - życie, pieniądze, przedmioty
+	// TODO
+	
+	// Ukryj pole z informacją o nazwie pomieszczenia
+	unset($build['room_title']);
+	
+	// Zmień ustawienia tranzycji
+	// Nie pytaj się, po co te zmienne, one po prostu muszą być
+	$newarr = array();
+	$cnt = 0;
+
+	foreach($build['room_transitions']['#items'] as $key => $val)
+	{
+		// Zmiana widoczności
+		if (!is_transition_visible($val['target_id']))
+			continue;
+
+		$newarr[] = $val;
+		
+		$tmp = $build['room_transitions'][$key];
+		unset($build['room_transitions'][$key]);
+		
+		// Jeśli tranzycja jest nieaktywna to podmieniamy link
+		if (is_transition_disabled($val['target_id']))
+			$tmp['#markup'] = preg_replace('~<[^>]*>~', '', $tmp['#markup']);
+
+		$build['room_transitions'][$cnt] = $tmp;
+		++$cnt;
+
+	}
+
+	$build['room_transitions']['#items'] = $newarr;
+}
+
 // Wykonanie tranzycji - zmiany stanu
 function drupal_rpg_node_view($node, $view_mode)
-{
+{	
 	// Jeśli typ węzła nas nie interesuje, to zostawiamy go bez zmian
 	if ($node->type != "transition")
 		return $node;
@@ -19,3 +77,4 @@ function drupal_rpg_node_view($node, $view_mode)
 
 	return $node;
 }
+

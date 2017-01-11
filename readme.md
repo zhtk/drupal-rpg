@@ -34,8 +34,7 @@ Tutaj znajduje się kod plugina do drupala, który będzie ułatwiał tworzenie 
   * Dodawanie i edycja pomieszczeń i przedmiotów powinna być możliwa z panelu administratora
   * Na pokój składałby się tekst wyjaśniający fabułę i zestaw linków prezentujących możliwą akcję do podjęcia. Link pozwala na jednoczesną: zmianę pokoju, edycję stanu życia, pieniędzy i ekwipunku. Link może być nieaktywny jeśli w ekwipunku brakuje pewnych przedmiotów, w takim przypadku może nie być wyświetlany aby nie zdradzać dalszej fabuły.
 4. Lista dodatkowych modułów/wtyczek:
-  * Session API
-  * Views
+  * Entity Reference
 5. Struktura danych serwisu, czyli typy zawartości i pola
  * _stan_ - informacja o stanie w jakim znajduje się użytkownik: aktualny pokój, stan ekwipunku, życie, rezerwa walutowa w postaci kredytów elektronicznej kryptowaluty (kryptokredytów);
  * _akcja_ - możliwa do wykonania ze spełnionymi _wymaganiami_, powoduje _efekty_;
@@ -49,12 +48,10 @@ Tutaj znajduje się kod plugina do drupala, który będzie ułatwiał tworzenie 
  * Pokoje
  * Strona z rejestracją
 8. Harmonogram prac uwzględniający termin oddania w sesji poprawkowej (przypominam, że sesja poprawkowa to pierwszy termin)
- * Do połowy stycznia:
-   * schemat bazy danych
-   * widoki pokojów
- * Do sesji - fabuła i poprawki
+ * Do połowy stycznia: schemat bazy danych, widoki pokojów
+ * Do sesji - fabuła i poprawki, zmiany stanów
 
 ## Instalacja
- * Sklonuj zawartość repozytorium do katalogu $drupal/sites/all/modules/, gdzie $drupal oznacza ścieżkę do instancji drupala
- * Zmień nazwę sklonowanego katalogu z drupal-rpg na drupal\_rpg
- * Aktywuj plugin w ustawieniach
+ * Sklonuj zawartość repozytorium do katalogu `$drupal/sites/all/modules/`, gdzie `$drupal` oznacza ścieżkę do instancji drupala
+ * Zmień nazwę sklonowanego katalogu z `drupal-rpg` na `drupal_rpg`
+ * Aktywuj plugin `Drupal RPG` w ustawieniach

@@ -1,4 +1,5 @@
 <?php
+module_load_include('php', 'drupal_rpg', 'state');
 
 // Czy link przejścia jest widoczny
 function is_transition_visible($nodeid)
@@ -25,10 +26,10 @@ function drupal_rpg_node_view_alter(&$build)
 	drupal_set_title($build['room_title']['#items'][0]['value']);
 	
 	// Wstaw status gracza - życie, pieniądze, przedmioty
-	// TODO
-	$status = 'Życie: 100 <br>';
-	$status .= 'Pieniądze: 0 <br>';
-	$status .= 'Przedmioty: <br>';
+	$st = new PlayerState();
+	$status = 'Życie: '.$st->getHealth().' <br>';
+	$status .= 'Pieniądze: '.$st->getMoney().' <br>';
+	$status .= 'Przedmioty: <br>'; // TODO
 	$status .= '<hr>';
 	$build['room_description'][0]['#markup'] = $status.$build['room_description'][0]['#markup'];
 	

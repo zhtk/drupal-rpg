@@ -55,7 +55,13 @@ class PlayerState
 			if (!$node)
 				continue;
 
-			$list .= $node->title.'; ';
+			// Przedmiot jest niewidoczny
+			if ($node->gameitem_visibility['und'][0]['value'] == 0)
+				continue;
+
+			// Dopisanie do listy
+			$list .= $node->title;
+			$list .= '; ';
 		}
 
 		return $list;

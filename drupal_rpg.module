@@ -4,14 +4,32 @@ module_load_include('php', 'drupal_rpg', 'state');
 // Czy link przejścia jest widoczny
 function is_transition_visible($nodeid)
 {
-	// TODO
+	$trans = node_load($nodeid);
+	$st = new PlayerState();
+
+	if (!isset($trans->transition_visibility['und']))
+		return TRUE;
+
+	foreach ($trans->transition_visibility['und'] as $item)
+		if (!$st->findItem($item['target_id']))
+			return FALSE;
+
 	return TRUE;
 }
 
 // Czy link prowadzący do przejścia jest aktywny
 function is_transition_disabled($nodeid)
 {
-	// TODO
+	$trans = node_load($nodeid);
+	$st = new PlayerState();
+
+	if (!isset($trans->transition_fire['und']))
+		return FALSE;
+
+	foreach ($trans->transition_fire['und'] as $item)
+		if (!$st->findItem($item['target_id']))
+			return TRUE;
+
 	return FALSE;
 }
 

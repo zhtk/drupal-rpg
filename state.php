@@ -47,9 +47,16 @@ class PlayerState
 	public function listItems()
 	{
 		$list = '';
-		// TODO
+
 		foreach ($this->store['itemki'] as $nid)
-			$list .= $nid.';';
+		{
+			$node = node_load($nid);
+
+			if (!$node)
+				continue;
+
+			$list .= $node->title.'; ';
+		}
 
 		return $list;
 	}
@@ -80,5 +87,15 @@ class PlayerState
 				$arr[] = $it;
 
 		$this->store['itemki'] = $arr;
+	}
+
+	public function setRoom($room)
+	{
+		$this->store['room'] = $room;
+	}
+
+	public function getRoom()
+	{
+		return $this->store['room'];
 	}
 }

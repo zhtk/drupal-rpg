@@ -34,7 +34,7 @@ function drupal_rpg_node_view_alter(&$build)
 	$build['room_description'][0]['#markup'] = $status.$build['room_description'][0]['#markup'];
 
 	// Zapisanie aktualnego pokoju
-	// TODO
+	$st->setRoom($build['#node']->nid);
 
 	// Ukryj pole z informacją o nazwie pomieszczenia
 	unset($build['room_title']);
@@ -90,19 +90,24 @@ function drupal_rpg_node_view($node, $view_mode)
 	// Reset stanu postaci
 	if ($node->transition_reset['und'][0]['value'] == 1)
 		$st->reset();
+
 	// Skok do zapisanego pokoju
-	if ($node->transition_load['und'][0]['value'] == 1)
+	if ($node->transition_load['und'][0]['value'] == 1 && $st->getRoom() != '')
 	{
-		// TODO
+		$dest = $st->getRoom();
+		drupal_goto('node/'.$dest.'/', array());
 	}
+
 	// Zmiana życia
 	$hp = $st->getHealth();
 	$hp += $node->transition_life_change['und'][0]['value'];
 	$st->setHealth($hp);
+
 	// Zmiana pieniędzy
 	$mp = $st->getMoney();
 	$mp += $node->transition_money_change['und'][0]['value'];
 	$st->setMoney($mp);
+
 	// Zmiany przedmiotów
 	if (isset($node->transition_item_add['und']))
 		foreach ($node->transition_item_add['und'] as $item)

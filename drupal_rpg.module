@@ -45,11 +45,11 @@ function drupal_rpg_node_view_alter(&$build)
 	
 	// Wstaw status gracza - życie, pieniądze, przedmioty
 	$st = new PlayerState();
-	$status = 'Życie: '.$st->getHealth().' <br>';
+	/*$status = 'Życie: '.$st->getHealth().' <br>';
 	$status .= 'Pieniądze: '.$st->getMoney().' <br>';
 	$status .= 'Przedmioty: '.$st->listItems().' <br>';
 	$status .= '<hr>';
-	$build['room_description'][0]['#markup'] = $status.$build['room_description'][0]['#markup'];
+	$build['room_description'][0]['#markup'] = $status.$build['room_description'][0]['#markup'];*/
 
 	// Zapisanie aktualnego pokoju
 	$st->setRoom($build['#node']->nid);
@@ -155,26 +155,36 @@ function drupal_rpg_node_view($node, $view_mode)
  */
 function drupal_rpg_block_info() {
 	$blocks = array();
-	$blocks['attr_block'] = array(
-	'info' => t('Attributes'),
-	);
+	$blocks['hp_block'] = array('info' => t('HP'));
+	$blocks['money_block'] = array('info' => t('Money'));
+	$blocks['items_block'] = array('info' => t('Items'));
 
 	return $blocks;
 }
 
 function drupal_rpg_block_view($delta = '') {
 	$block = array();
-
 	$st = new PlayerState();
-	$status = 'Życie: '.$st->getHealth().' <br>';
-	$status .= 'Pieniądze: '.$st->getMoney().' <br>';
-	$status .= 'Przedmioty: '.$st->listItems().' <br>';
-	$status .= '<hr>';
+	$status = '';
+	
+	switch($delta) {
+		case 'hp_block':
+			$block['subject'] = t('Życie');
+			$status = $st->getHealth();
+			break;
+		case 'money_block':
+			$block['subject'] = t('Pieniądze');
+			$status = $st->getMoney();
+			break;
+		case 'items_block':
+			$block['subject'] = t('Przedmioty');
+			$status = $st->listItems();
+			break;
+	}
 
-	$block['subject'] = t('Attributes');
 	$block['content'] = array(
-	'#type' => 'markup',
-	'#markup' => $status,
+		'#type' => 'markup',
+		'#markup' => $status,
 	);
 
 	return $block;

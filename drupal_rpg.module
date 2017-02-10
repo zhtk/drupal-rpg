@@ -150,3 +150,33 @@ function drupal_rpg_node_view($node, $view_mode)
 	return $node;
 }
 
+/**
+ * Implements hook_block_info().
+ */
+function drupal_rpg_block_info() {
+	$blocks = array();
+	$blocks['attr_block'] = array(
+	'info' => t('Attributes'),
+	);
+
+	return $blocks;
+}
+
+function drupal_rpg_block_view($delta = '') {
+	$block = array();
+
+	$st = new PlayerState();
+	$status = 'Życie: '.$st->getHealth().' <br>';
+	$status .= 'Pieniądze: '.$st->getMoney().' <br>';
+	$status .= 'Przedmioty: '.$st->listItems().' <br>';
+	$status .= '<hr>';
+
+	$block['subject'] = t('Attributes');
+	$block['content'] = array(
+	'#type' => 'markup',
+	'#markup' => $status,
+	);
+
+	return $block;
+}
+

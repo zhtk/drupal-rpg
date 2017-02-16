@@ -18,9 +18,9 @@ class PlayerState
 
 	public function reset()
 	{
-		$this->store['hp'] = 100;
+		$this->store['hp'] = 70;
 		$this->store['kasa'] = 0;
-		$this->store['itemki'] = array();
+		$this->store['itemki'] = array(59, 58, 57);
 		$this->store['room'] = '';
 	}
 
@@ -61,7 +61,7 @@ class PlayerState
 
 			// Dopisanie do listy
 			$list .= $node->title;
-			$list .= '; ';
+			$list .= '<br>';
 		}
 
 		return $list;

@@ -65,11 +65,6 @@ function drupal_rpg_node_view_alter(&$build)
 	
 	// Wstaw status gracza - życie, pieniądze, przedmioty
 	$st = new PlayerState();
-	/*$status = 'Życie: '.$st->getHealth().' <br>';
-	$status .= 'Pieniądze: '.$st->getMoney().' <br>';
-	$status .= 'Przedmioty: '.$st->listItems().' <br>';
-	$status .= '<hr>';
-	$build['room_description'][0]['#markup'] = $status.$build['room_description'][0]['#markup'];*/
 
 	// Zapisanie aktualnego pokoju
 	$st->setRoom($build['#node']->nid);

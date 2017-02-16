@@ -33,6 +33,26 @@ function is_transition_disabled($nodeid)
 	return FALSE;
 }
 
+function drupal_rpg_entity_info() {
+	$return['node']['bundles']['transition']['uri callback'] = 'rpg_transition_uri';
+	return $return;
+}
+
+/**
+ * Implements callback_entity_info_uri().
+ */
+function rpg_transition_uri($node) {
+	if (is_transition_disabled($node->nid)) {
+		$uri['path'] = '';
+		$uri['options']['attributes']['class'] = 'transition-disabled';
+	}
+	else {
+		$uri['path'] = 'node/'.$node->nid;
+		$uri['options']['attributes']['class'] = 'transition-enabled';
+	}
+	return $uri;
+}
+
 // Zmienia wygląd pokoju
 function drupal_rpg_node_view_alter(&$build)
 {
@@ -82,8 +102,12 @@ function drupal_rpg_node_view_alter(&$build)
 		unset($build['room_transitions'][$key]);
 		
 		// Jeśli tranzycja jest nieaktywna to podmieniamy link
-		if (is_transition_disabled($val['target_id']))
-			$tmp['#markup'] = preg_replace('~<[^>]*>~', '', $tmp['#markup']);
+		//if (is_transition_disabled($val['target_id']))
+			//$tmp['#markup'] = preg_replace('~<[^>]*>~', '', $tmp['#markup']);
+			//$tmp['#markup'] = '<div class="transition-disabled">'.preg_replace('~<[^>]*>~', '', $tmp['#markup']).'</div>';
+		//else
+			//$tmp['#markup'] = $tmp['#markup'];
+			//$tmp['#markup'] = '<div class="transition-enabled">'.$tmp['#markup'].'</div>';
 
 		$build['room_transitions'][$cnt] = $tmp;
 		++$cnt;

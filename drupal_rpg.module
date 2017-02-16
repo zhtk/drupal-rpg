@@ -95,6 +95,14 @@ function drupal_rpg_node_view_alter(&$build)
 // Wykonanie tranzycji - zmiany stanu
 function drupal_rpg_node_view($node, $view_mode)
 {
+	$st = new PlayerState();
+	
+	//Reset przy powrocie do początku
+	if ($node->type == "room") {
+		if ($node->nid == 44)
+			$st->reset();
+	}
+	
 	// Jeśli typ węzła nas nie interesuje, to zostawiamy go bez zmian
 	if ($node->type != "transition")
 		return $node;
@@ -102,23 +110,16 @@ function drupal_rpg_node_view($node, $view_mode)
 	if ($view_mode != 'full' || !node_is_page($node))
 		return $node;
 
-	$st = new PlayerState();
-
 	// Wykonujemy przejście
 	// Reset stanu postaci
 	if ($node->transition_reset['und'][0]['value'] == 1)
 		$st->reset();
 
-	// Skok do zapisanego pokoju
-	if ($node->transition_load['und'][0]['value'] == 1 && $st->getRoom() != '')
-	{
-		$dest = $st->getRoom();
-		drupal_goto('node/'.$dest.'/', array());
-	}
-
 	// Zmiana życia
 	$hp = $st->getHealth();
 	$hp += $node->transition_life_change['und'][0]['value'];
+	if ($hp > 100)
+		$hp = 100;
 	$st->setHealth($hp);
 
 	// Zmiana pieniędzy
@@ -134,12 +135,19 @@ function drupal_rpg_node_view($node, $view_mode)
 	if (isset($node->transition_item_remove['und']))
 		foreach ($node->transition_item_remove['und'] as $item)
 			$st->removeItem($item['target_id']);
-
-
+	
 	// Po śmierci zmieniamy na dead page
-	if ($st->getHealth() < 0 && isset($node->transition_death[LANGUAGE_NONE][0]['target_id']))
+	if ($st->getHealth() <= 0 && isset($node->transition_death[LANGUAGE_NONE][0]['target_id']))
 	{
+		$st->setHealth(0);
 		$dest = $node->transition_death[LANGUAGE_NONE][0]['target_id'];
+		drupal_goto('node/'.$dest.'/', array());
+	}
+	
+	// Skok do zapisanego pokoju
+	if ($node->transition_load['und'][0]['value'] == 1 && $st->getRoom() != '')
+	{
+		$dest = $st->getRoom();
 		drupal_goto('node/'.$dest.'/', array());
 	}
 
